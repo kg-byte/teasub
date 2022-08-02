@@ -12,6 +12,12 @@ RSpec.describe 'TeaFacade' do
 	end
 
 
-
+	it 'generates two tea for Qtea selection' do 
+		result = TeaFacade.plenTea_selection(subscription.id)
+		expect(result).to be_an(Array)
+		expect(result).to be_an(Array)
+		expect(result.count).to eq(2)
+		expect(result[0].subscription_id).to eq(subscription.id)
+	end
 
 end
