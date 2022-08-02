@@ -7,24 +7,26 @@ RSpec.describe 'TeaFacade' do
 	
 	it 'generates one tea for Qtea selection' do 
 		result = TeaFacade.QTea_selection(subscription.id)
-		expect(result).to be_a(Tea)
-		expect(result.subscription_id).to eq(subscription.id)
+		expect(result).to be_an(Array)
+		expect(result).to be_all(Tea)
+		expect(result.count).to eq(1)
+		expect(result[0].subscription_id).to eq(subscription.id)
 	end
 
 
 	it 'generates two tea for plenTea selection' do 
 		result = TeaFacade.plenTea_selection(subscription.id)
 		expect(result).to be_an(Array)
-		expect(result).to be_an(Array)
+		expect(result).to be_all(Tea)
 		expect(result.count).to eq(2)
-		expect(result[0].subscription_id).to eq(subscription.id)
+		expect(result.sample.subscription_id).to eq(subscription.id)
 	end
 
 	it 'generates two tea for thirsTea selection' do 
 		result = TeaFacade.thirsTea_selection(subscription.id)
 		expect(result).to be_an(Array)
-		expect(result).to be_an(Array)
+		expect(result).to be_all(Tea)
 		expect(result.count).to eq(4)
-		expect(result[0].subscription_id).to eq(subscription.id)
+		expect(result.sample.subscription_id).to eq(subscription.id)
 	end
 end
