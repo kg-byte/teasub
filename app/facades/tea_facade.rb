@@ -20,10 +20,16 @@ class TeaFacade
 
 	end
 
-	# self.thirsTea_selection(subscription_id)
-
-
-	# end
+	def self.thirsTea_selection(subscription_id)
+		data = get_tea.shuffle[0..3]
+		data.map do |datum|
+			Tea.create(title: datum[:name], 
+					description: datum[:description], 
+					temperature: datum[:temperature], 
+					brew_time: datum[:brew_time], 
+					subscription_id: subscription_id)
+		end
+	end
 
 	def self.get_tea
 		data ||= TeaService.get_tea
