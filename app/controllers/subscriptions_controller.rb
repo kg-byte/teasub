@@ -1,5 +1,7 @@
 class SubscriptionsController < ApplicationController
+	include EdgeCaseHelper
 	def create
+		return edge_case_response if edge_case_conditions
 		subscription = Subscription.create(customer_id: params[:customer_id],
 							title: params[:subscription_type],
 							price: params[:subscription_type],
