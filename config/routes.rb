@@ -5,5 +5,5 @@ Rails.application.routes.draw do
   # root "articles#index"
   post '/subscriptions', to: 'subscriptions#create'
   put '/subscriptions', to: 'subscriptions#update'
-  get '/subscriptions', to: 'subscriptions#index'
+  get 'customers/:id/subscriptions', to: 'subscriptions#index'
 end
