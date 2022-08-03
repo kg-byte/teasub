@@ -26,52 +26,13 @@ RSpec.describe Subscription, type: :request do
   end
 
   describe 'sad paths' do
-    # it 'cannot cancel/reactivate a subscription with missing params' do
-    #   params = {
-    #     "subscription_type": 0
-    #   }
-    #   put '/subscriptions', headers: headers, params: JSON.generate(params)
+    it 'cannot get customer subscription with invalid customer_id' do
+      get "/customers/0/subscriptions", headers: headers
 
-    #   expect(response.status).to eq(400)
-    #   result = JSON.parse(response.body, symbolize_names: true)[:data]
-    #   expect(result[:error]).to eq('Both subscription_id and new_status parameters are required')
-    # end
-
-    # it 'cannot cancel/reactivate subscription with empty params' do
-    #   params = {
-    #     "subscription_id": '',
-    #     "new_status": 0
-    #   }
-    #   put '/subscriptions', headers: headers, params: JSON.generate(params)
-      
-    #   expect(response.status).to eq(400)
-    #   result = JSON.parse(response.body, symbolize_names: true)[:data]
-    #   expect(result[:error]).to eq('Parameters cannot be empty')
-    # end
-
-    # it 'cannot cancel/reactivate subscription with invalid subscription_id' do
-    #   params = {
-    #     "subscription_id": 0,
-    #     "new_status": 'cancel'
-    #   }
-    #   put '/subscriptions', headers: headers, params: JSON.generate(params)
-      
-    #   expect(response.status).to eq(400)
-    #   result = JSON.parse(response.body, symbolize_names: true)[:data]
-    #   expect(result[:error]).to eq('Invalid subscription_id')
-    # end
-
-    # it 'cannot cancel/reactivate subscription with invalid new_status' do
-    #   params = {
-    #     "subscription_id": active_sub.id,
-    #     "new_status": 0
-    #   }
-    #   put '/subscriptions', headers: headers, params: JSON.generate(params)
-      
-    #   expect(response.status).to eq(400)
-    #   result = JSON.parse(response.body, symbolize_names: true)[:data]
-    #   expect(result[:error]).to eq('new_status must be cancel or reactivate')
-    # end
+      expect(response.status).to eq(400)
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(result[:error]).to eq('Invalid customer_id')
+    end
 
   end
 end
