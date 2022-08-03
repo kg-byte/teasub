@@ -17,7 +17,7 @@ RSpec.describe Subscription, type: :request do
       put '/subscriptions', headers: headers, params: JSON.generate(params)
 
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-# require 'pry'; binding.pry
+
       expect(result).to be_a(Hash)
       expect(result[:type]).to eq('subscription')
       expect(result[:attributes][:title]).to eq('QTea')
@@ -47,42 +47,53 @@ RSpec.describe Subscription, type: :request do
 
   end
 
-  # describe 'sad paths' do
-  #   it 'cannot cancel/reactivate a subscription with missing params' do
-  #     params = {
-  #       "customer_id": '',
-  #       "subscription_type": 0
-  #     }
-  #     post '/subscriptions', headers: headers, params: JSON.generate(params)
+  describe 'sad paths' do
+    it 'cannot cancel/reactivate a subscription with missing params' do
+      params = {
+        "subscription_type": 0
+      }
+      put '/subscriptions', headers: headers, params: JSON.generate(params)
 
-  #     expect(response.status).to eq(400)
-  #     result = JSON.parse(response.body, symbolize_names: true)[:data]
-  #     expect(result[:error]).to eq('Parameters cannot be empty')
-  #   end
+      expect(response.status).to eq(400)
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(result[:error]).to eq('Both subscription_id and new_status parameters are required')
+    end
 
-  #   it 'cannot cancel/reactivate subscription with empty params' do
-  #     params = {
-  #       "subscription_type": 0
-  #     }
-  #     post '/subscriptions', headers: headers, params: JSON.generate(params)
+    it 'cannot cancel/reactivate subscription with empty params' do
+      params = {
+        "subscription_id": '',
+        "new_status": 0
+      }
+      put '/subscriptions', headers: headers, params: JSON.generate(params)
       
-  #     expect(response.status).to eq(400)
-  #     result = JSON.parse(response.body, symbolize_names: true)[:data]
-  #     expect(result[:error]).to eq('Both customer_id and subscription_type parameters are required')
-  #   end
+      expect(response.status).to eq(400)
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(result[:error]).to eq('Parameters cannot be empty')
+    end
 
-  #   it 'cannot update a subscription with invalid subscription_id' do
-  #     params = {
-  #       "customer_id": user1.id,
-  #       "subscription_type": 4
-  #     }
-  #     post '/subscriptions', headers: headers, params: JSON.generate(params)
+    it 'cannot cancel/reactivate subscription with invalid subscription_id' do
+      params = {
+        "subscription_id": 0,
+        "new_status": 'cancel'
+      }
+      put '/subscriptions', headers: headers, params: JSON.generate(params)
       
-  #     expect(response.status).to eq(400)
-  #     result = JSON.parse(response.body, symbolize_names: true)[:data]
-  #     expect(result[:error]).to eq('subscription_type must be 0(QTea), 1(plenTea), or 2(thirsTea)')
-  #   end
+      expect(response.status).to eq(400)
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(result[:error]).to eq('Invalid subscription_id')
+    end
 
+    it 'cannot cancel/reactivate subscription with invalid new_status' do
+      params = {
+        "subscription_id": active_sub.id,
+        "new_status": 0
+      }
+      put '/subscriptions', headers: headers, params: JSON.generate(params)
+      
+      expect(response.status).to eq(400)
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+      expect(result[:error]).to eq('new_status must be cancel or reactivate')
+    end
 
-  # end
+  end
 end

@@ -1,7 +1,8 @@
 class SubscriptionsController < ApplicationController
-	include EdgeCaseHelper
+	include NewSubscriptionEdgeCaseHelper
+	include UpdateSubscriptionEdgeCaseHelper
 	def create
-		return edge_case_response if edge_case_conditions
+		return new_edge_case_response if new_edge_case_conditions
 		subscription = Subscription.create(customer_id: params[:customer_id],
 							title: params[:subscription_type],
 							price: params[:subscription_type],
@@ -13,7 +14,7 @@ class SubscriptionsController < ApplicationController
 	end
 
 	def update
-		# return edge_case_response if edge_case_conditions
+		return update_edge_case_response if update_edge_case_conditions
 		subscription = Subscription.find(params[:subscription_id])
 		if params[:new_status] == 'cancel'
 			subscription.update(status: 1)
