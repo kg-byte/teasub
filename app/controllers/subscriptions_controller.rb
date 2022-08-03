@@ -1,6 +1,8 @@
 class SubscriptionsController < ApplicationController
 	include NewSubscriptionEdgeCaseHelper
 	include UpdateSubscriptionEdgeCaseHelper
+	include IndexSubscriptionEdgeCaseHelper
+
 	def create
 		return new_edge_case_response if new_edge_case_conditions
 		subscription = new_subscription(params[:customer_id], params[:subscription_type])
@@ -13,6 +15,11 @@ class SubscriptionsController < ApplicationController
 		subscription = Subscription.find(params[:subscription_id])
 		update_subscription(subscription, params[:new_status])
 		render json: SubscriptionSerializer.new(subscription)
+	end
+
+	def index
+		return index_edge_case_response if index_edge_case_conditions
+		render json: SubscriptionSerializer.new(Customer.find(params[:id]).subscriptions)
 	end
 
 	private
