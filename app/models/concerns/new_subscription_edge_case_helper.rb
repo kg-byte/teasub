@@ -4,15 +4,15 @@ module NewSubscriptionEdgeCaseHelper
       return render json: ErrorSerializer.format_error(new_error_messages[:new_missing_params]), status: 400
     elsif new_empty_params
       return render json: ErrorSerializer.format_error(new_error_messages[:new_empty_params]), status: 400 
-    elsif invalid_customer_id
-      return render json: ErrorSerializer.format_error(new_error_messages[:invalid_customer_id]), status: 400 
-    elsif invalid_subscription_type
-      return render json: ErrorSerializer.format_error(new_error_messages[:invalid_subscription_type]), status: 400 
+    elsif new_invalid_customer_id
+      return render json: ErrorSerializer.format_error(new_error_messages[:new_invalid_customer_id]), status: 400 
+    elsif new_invalid_subscription_type
+      return render json: ErrorSerializer.format_error(new_error_messages[:new_invalid_subscription_type]), status: 400 
     end
   end
 
   def new_edge_case_conditions
-    new_missing_params || new_empty_params || invalid_customer_id || invalid_subscription_type
+    new_missing_params || new_empty_params || new_invalid_customer_id || new_invalid_subscription_type
   end
 
   def new_missing_params
@@ -24,19 +24,19 @@ module NewSubscriptionEdgeCaseHelper
   end
 
 
-  def invalid_customer_id
+  def new_invalid_customer_id
     !Customer.pluck(:id).include?(params[:customer_id])
   end
 
-  def invalid_subscription_type
+  def new_invalid_subscription_type
     ![0,1,2].include?(params[:subscription_type])
   end
 
   def new_error_messages
    {  new_missing_params: 'Both customer_id and subscription_type parameters are required',
       new_empty_params: 'Parameters cannot be empty',
-      invalid_subscription_type: 'subscription_type must be 0(QTea), 1(plenTea), or 2(thirsTea)',
-      invalid_customer_id: 'Invalid customer_id'
+      new_invalid_subscription_type: 'subscription_type must be 0(QTea), 1(plenTea), or 2(thirsTea)',
+      new_invalid_customer_id: 'Invalid customer_id'
     }
   end
 end
