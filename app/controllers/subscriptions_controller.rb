@@ -13,6 +13,14 @@ class SubscriptionsController < ApplicationController
 	end
 
 	def update
+		# return edge_case_response if edge_case_conditions
+		subscription = Subscription.find(params[:subscription_id])
+		if params[:new_status] == 'cancel'
+			subscription.update(status: 1)
+		elsif params[:new_status] == 'reactivate'
+			subscription.update(status: 0)
+		end
+		render json: SubscriptionSerializer.new(subscription)
 	end
 
 	def index
