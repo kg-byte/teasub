@@ -7,7 +7,7 @@ RSpec.describe Subscription, type: :request do
         'Accept': 'application/json'
       }}
   describe 'happy path' do
-    it 'creates a new subscription' do
+    it 'creates a new QTea subscription' do
       params = {
         "customer_id": user1.id,
         "subscription_type": 0
@@ -25,6 +25,46 @@ RSpec.describe Subscription, type: :request do
       expect(result[:attributes][:customer_id]).to eq(user1.id)
       expect(result[:relationships]).to have_key(:tea)
       expect(result[:relationships][:tea][:data].count).to eq(1)
+    end
+
+    it 'creates a new plenTea subscription' do
+      params = {
+        "customer_id": user1.id,
+        "subscription_type": 1
+      }
+      post '/subscriptions', headers: headers, params: JSON.generate(params)
+      expect(response).to be_successful
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(result).to be_a(Hash)
+      expect(result[:type]).to eq('subscription')
+      expect(result[:attributes][:title]).to eq('plenTea')
+      expect(result[:attributes][:price]).to eq(19.99)
+      expect(result[:attributes][:frequency]).to eq('bi-weekly')
+      expect(result[:attributes][:status]).to eq('active')
+      expect(result[:attributes][:customer_id]).to eq(user1.id)
+      expect(result[:relationships]).to have_key(:tea)
+      expect(result[:relationships][:tea][:data].count).to eq(2)
+    end
+
+    it 'creates a new thirsTea subscription' do
+      params = {
+        "customer_id": user1.id,
+        "subscription_type": 2
+      }
+      post '/subscriptions', headers: headers, params: JSON.generate(params)
+      expect(response).to be_successful
+      result = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(result).to be_a(Hash)
+      expect(result[:type]).to eq('subscription')
+      expect(result[:attributes][:title]).to eq('thirsTea')
+      expect(result[:attributes][:price]).to eq(24.99)
+      expect(result[:attributes][:frequency]).to eq('weekly')
+      expect(result[:attributes][:status]).to eq('active')
+      expect(result[:attributes][:customer_id]).to eq(user1.id)
+      expect(result[:relationships]).to have_key(:tea)
+      expect(result[:relationships][:tea][:data].count).to eq(4)
     end
   end
 
