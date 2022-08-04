@@ -31,7 +31,7 @@ RSpec.describe Subscription, type: :request do
 
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Invalid customer_id')
+      expect(result[:error]).to eq('Customer must exist')
     end
 
   end
