@@ -1,52 +1,33 @@
 class SubscriptionsController < ApplicationController
-	include NewSubscriptionEdgeCaseHelper
-	include UpdateSubscriptionEdgeCaseHelper
-	include IndexSubscriptionEdgeCaseHelper
 
 	def create
-		return new_edge_case_response if new_edge_case_conditions
-		subscription = new_subscription(params[:customer_id], params[:subscription_type])
-		add_tea(subscription.title, subscription.id)
-		render json: SubscriptionSerializer.new(subscription)
+		result = CreateSubscription.call(create_params: params)
+		if result.success?
+			render json: SubscriptionSerializer.new(result.subscription), status: :created
+		else
+			render json: ErrorSerializer.format_error(result.error), status: 400
+		end
 	end
 
 	def update
-		return update_edge_case_response if update_edge_case_conditions
-		subscription = Subscription.find(params[:subscription_id])
-		update_subscription(subscription, params[:new_status])
-		render json: SubscriptionSerializer.new(subscription)
+		result = UpdateSubscription.call(update_params: params)
+		if result.success?
+			render json: SubscriptionSerializer.new(result.subscription), status: 200 
+		else
+			render json: ErrorSerializer.format_error(result.error), status: 400
+		end
 	end
 
 	def index
-		return index_edge_case_response if index_edge_case_conditions
-		render json: SubscriptionSerializer.new(Customer.find(params[:id]).subscriptions)
+		if valid_customer_id
+			render json: SubscriptionSerializer.new(Customer.find(params[:id]).subscriptions)
+		else
+			render json: ErrorSerializer.format_error('Customer must exist'), status: 400
+		end
 	end
 
 	private
-	def new_subscription(customer_id, subscription_type)
-		Subscription.create(customer_id: customer_id,
-									title: subscription_type,
-									price: subscription_type,
-									frequency: subscription_type,
-									status:0
-									)
-	end
-
-	def update_subscription(subscription, new_status)
-		if new_status == 'cancel'
-			subscription.update(status: 1)
-		elsif new_status == 'reactivate'
-			subscription.update(status: 0)
-		end
-	end
-
-	def add_tea(subscription_type, subscription_id)
-		if subscription_type == "QTea"
-			TeaFacade.QTea_selection(subscription_id)
-		elsif subscription_type == 'plenTea'
-			TeaFacade.plenTea_selection(subscription_id)
-		elsif subscription_type == 'thirsTea'
-			TeaFacade.thirsTea_selection(subscription_id)
-		end
+	def valid_customer_id
+		Customer.pluck(:id).include?(params[:id].to_i)
 	end
 end
