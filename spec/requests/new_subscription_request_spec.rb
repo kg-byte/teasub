@@ -78,18 +78,18 @@ RSpec.describe Subscription, type: :request do
 
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Parameters cannot be empty')
+      expect(result[:error]).to eq('Customer must exist')
     end
 
     it 'cannot create subscription with empty params' do
       params = {
-        "subscription_type": 0
+        "customer_id": user1.id
       }
       post '/subscriptions', headers: headers, params: JSON.generate(params)
       
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Both customer_id and subscription_type parameters are required')
+      expect(result[:error]).to eq('Invalid subscription_id')
     end
 
     it 'cannot create subscription with invalid subscription_type' do
@@ -101,7 +101,7 @@ RSpec.describe Subscription, type: :request do
       
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('subscription_type must be 0(QTea), 1(plenTea), or 2(thirsTea)')
+      expect(result[:error]).to eq('Invalid subscription_id')
     end
 
     it 'cannot create subscription with invalid customer_id' do
@@ -113,7 +113,7 @@ RSpec.describe Subscription, type: :request do
       
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Invalid customer_id')
+      expect(result[:error]).to eq('Customer must exist')
     end
   end
 end

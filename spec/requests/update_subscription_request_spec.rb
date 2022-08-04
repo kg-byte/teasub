@@ -56,7 +56,7 @@ RSpec.describe Subscription, type: :request do
 
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Both subscription_id and new_status parameters are required')
+      expect(result[:error]).to eq('Invalid subscription_id')
     end
 
     it 'cannot cancel/reactivate subscription with empty params' do
@@ -68,7 +68,7 @@ RSpec.describe Subscription, type: :request do
       
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('Parameters cannot be empty')
+      expect(result[:error]).to eq('Invalid subscription_id')
     end
 
     it 'cannot cancel/reactivate subscription with invalid subscription_id' do
@@ -92,7 +92,7 @@ RSpec.describe Subscription, type: :request do
       
       expect(response.status).to eq(400)
       result = JSON.parse(response.body, symbolize_names: true)[:data]
-      expect(result[:error]).to eq('new_status must be cancel or reactivate')
+      expect(result[:error]).to eq('Invalid new_status')
     end
 
   end
